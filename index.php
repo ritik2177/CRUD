@@ -3,6 +3,8 @@
   //INSERT INTO `note` (`sno`, `title`, `description`, `tstamp`) VALUES (NULL, 'Buy book', 'science book i have needed right now.', '2024-10-30 08:52:58.000000');
 
   $insert = false;
+  $update = false;
+  $delete = false;
   $servername = "localhost";
   $username = "root";
   $password = "";
@@ -14,21 +16,40 @@
     die("sorry we failed to connect : ".mysqli_connect_error());
   }
 
+  if(isset($_GET['delete'])){
+    $sno = $_GET['delete'];
+    echo $sno;
+  }
   if($_SERVER['REQUEST_METHOD'] == 'POST'){
-    $title = $_POST["title"];
-    $description = $_POST["description"];
+    if (isset($_POST['snoEdit'])){
+      //update the record
+        $sno = $_POST["snoEdit"];
+        $title = $_POST["titleEdit"];
+        $description = $_POST["descriptionEdit"];
 
-    $sql = "INSERT INTO `note` (`title`, `description`) VALUES ('$title', '$description');";
-    $result = mysqli_query($conn, $sql);
-
-    if($result){
-      //echo "The record has been inderted successfully!";
-      $insert = true;
-
+        $sql = "UPDATE `note` SET `title` = '$title' , `description` = '$description' WHERE `note`.`sno` = $sno";
+        $result = mysqli_query($conn, $sql);
+          if($result){
+            $update = true;
+          }
+          
     }
     else{
-      echo "The record was not inserted successfully because of this error --->". mysqli_error($conn);
-    }
+      $title = $_POST["title"];
+      $description = $_POST["description"];
+
+      $sql = "INSERT INTO `note` (`title`, `description`) VALUES ('$title', '$description');";
+      $result = mysqli_query($conn, $sql);
+
+      if($result){
+        //echo "The record has been inderted successfully!";
+        $insert = true;
+
+      }
+      else{
+        echo "The record was not inserted successfully because of this error --->". mysqli_error($conn);
+      }
+  }
   }
 ?>
 
@@ -51,15 +72,31 @@
       </button> -->
 
       <!-- Edit Modal -->
-      <div class="modal fade" id="editModalLable" tabindex="-1" aria-labelledby="editModalLable" aria-hidden="true">
+      <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLable" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h1 class="modal-title fs-5" id="editModalLable">Modal title</h1>
+              <h1 class="modal-title fs-5" id="editModalLable">Edit This note</h1>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              ...
+                <form action="/crud/index.php" method="post">
+                  <input type="hidden" name="snoEdit" id="snoEdit">
+                <div class="mb-3">
+                    <label for="title" class="form-label">Note Title</label>
+                    <input type="text" class="form-control" id="titleEdit" name="titleEdit" aria-describedby="emailHelp">
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Notes Discription</label>
+                    <textarea class="form-control" id="descriptionEdit" name="descriptionEdit" rows="3"></textarea>
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="exampleCheck1">
+                    <label class="form-check-label" for="exampleCheck1">Check me out</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Note</button>
+            </form>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -98,7 +135,23 @@
       <?php
       if($insert){
         echo "<div class='alert alert-success alert-dismissible fade show' role='alert'>
-        <strong>Insert!</strong> Your note has been insertedd successfully.
+        <strong>Insert!</strong> Your note has been inserted successfully.
+        <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+        </div>";
+      }
+      ?>
+      <?php
+      if($delete){
+        echo "<div class='alert alert-success alert-dismissible fade show' role='alert'>
+        <strong>Delete!</strong> Your note has been deleted successfully.
+        <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+        </div>";
+      }
+      ?>
+      <?php
+      if($update){
+        echo "<div class='alert alert-success alert-dismissible fade show' role='alert'>
+        <strong>Update!</strong> Your note has been updated successfully.
         <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
         </div>";
       }
@@ -142,11 +195,10 @@
               <th scope='row'>". $sno ."</th>
               <td>". $row['title'] ."</td>
               <td>". $row['description'] ."</td>
-              <td><button class='btn btn-sm btn-primary edit'>Edit</button> <a href='/del'>Delete</a></td>
+              <td><button id=".$row['sno']." class='btn btn-sm btn-primary edit'>Edit</button> <button id=d".$row['sno']." class='btn btn-sm btn-primary delete'>Delete</button>
             </tr>";
             $sno = $sno +1;
-          }
-          
+          }          
     ?>
       </tbody>  
     </table>
@@ -161,9 +213,34 @@
       </script>
       <script>
       edits = document.getElementsByClassName('edit');
-      Array.from(edits).forEach((element)=>{
+        Array.from(edits).forEach((element)=>{
         element.addEventListener("click", (e)=>{
-          console.log("edit", e);
+          console.log("edit", );
+          tr = e.target.parentNode.parentNode;
+          title = tr.getElementsByTagName("td")[0].innerText;
+          description = tr.getElementsByTagName("td")[1].innerText;
+          console.log(title, description);
+          titleEdit.value = title;
+          descriptionEdit.value = description;
+          snoEdit.value = e.target.id;
+          console.log(e.target.id);
+          $('#editModal').modal('toggle');
+        })
+      })
+
+      deletes = document.getElementsByClassName('delete');
+        Array.from(deletes).forEach((element)=>{
+        element.addEventListener("click", (e)=>{
+          console.log("edit", );
+          sno = e.target.id.substr(1,);
+          
+          if(confirm("Press a button")){
+            console.log("yes");
+            window.location = `/CRUD/index.php?delete=${sno}`;
+          }
+          else{
+            console.log("no");
+          }
         })
       })
     </script>
