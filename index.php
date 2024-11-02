@@ -18,7 +18,9 @@
 
   if(isset($_GET['delete'])){
     $sno = $_GET['delete'];
-    echo $sno;
+    $delete = true;
+    $sql = "DELETE FROM `note` WHERE `sno`='$sno'";
+    $result = mysqli_query($conn, $sql);
   }
   if($_SERVER['REQUEST_METHOD'] == 'POST'){
     if (isset($_POST['snoEdit'])){
@@ -57,6 +59,11 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <style>
+      .color{
+        background-color: rgb(50, 40, 108);
+      }
+    </style>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>CRUD</title>
@@ -209,21 +216,21 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="//cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
       <script>
-        let table = new DataTable('#myTable');
+        $(document).ready(function(){
+          $('#myTable').DataTable();
+        });
+        //let table = new DataTable('#myTable');
       </script>
       <script>
       edits = document.getElementsByClassName('edit');
         Array.from(edits).forEach((element)=>{
         element.addEventListener("click", (e)=>{
-          console.log("edit", );
           tr = e.target.parentNode.parentNode;
           title = tr.getElementsByTagName("td")[0].innerText;
           description = tr.getElementsByTagName("td")[1].innerText;
-          console.log(title, description);
           titleEdit.value = title;
           descriptionEdit.value = description;
           snoEdit.value = e.target.id;
-          console.log(e.target.id);
           $('#editModal').modal('toggle');
         })
       })
@@ -231,15 +238,10 @@
       deletes = document.getElementsByClassName('delete');
         Array.from(deletes).forEach((element)=>{
         element.addEventListener("click", (e)=>{
-          console.log("edit", );
           sno = e.target.id.substr(1,);
           
-          if(confirm("Press a button")){
-            console.log("yes");
+          if(confirm("Are you sure you want to delete this note?")){
             window.location = `/CRUD/index.php?delete=${sno}`;
-          }
-          else{
-            console.log("no");
           }
         })
       })
