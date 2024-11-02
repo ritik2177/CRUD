@@ -61,8 +61,8 @@
   <head>
     <style>
       .color{
-        background-color: rgb(50, 40, 108);
-      }
+        background-color: azure;
+    }
     </style>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -71,7 +71,7 @@
     <link rel="stylesheet" href="//cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
       
   </head>
-  <body>
+  <body class="color">
     
       <!-- Edit modal -->
       <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModalLable">
@@ -141,7 +141,7 @@
 
       <?php
       if($insert){
-        echo "<div class='alert alert-success alert-dismissible fade show' role='alert'>
+        echo "<div class='text-success alert alert-success alert-dismissible fade show' role='alert'>
         <strong>Insert!</strong> Your note has been inserted successfully.
         <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
         </div>";
@@ -169,11 +169,11 @@
         <form action="/crud/index.php" method="post">
             <div class="mb-3">
                 <label for="title" class="form-label">Note Title</label>
-                <input type="text" class="form-control" id="title" name="title" aria-describedby="emailHelp">
+                <input type="text" class="form-control  border border-primary" id="title" name="title" aria-describedby="emailHelp">
             </div>
             <div class="mb-3">
                 <label for="description" class="form-label">Notes Discription</label>
-                <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                <textarea class="form-control  border border-primary" id="description" name="description" rows="3"></textarea>
             </div>
 
             <div class="mb-3 form-check">
@@ -186,10 +186,10 @@
 <table class="table" id="myTable">
   <thead>
     <tr>
-      <th scope="col">SNo</th>
-      <th scope="col">Title</th>
-      <th scope="col">Description</th>
-      <th scope="col">Actions</th>
+      <th scope="col" class="bg-primary">SNo</th>
+      <th scope="col" class="bg-primary">Title</th>
+      <th scope="col" class="bg-primary">Description</th>
+      <th scope="col" class="bg-primary">Actions</th>
     </tr>
   </thead>
   <tbody>
@@ -199,10 +199,10 @@
           $sno =1;
           while($row = mysqli_fetch_assoc($result)){
             echo " <tr>
-              <th scope='row'>". $sno ."</th>
-              <td>". $row['title'] ."</td>
-              <td>". $row['description'] ."</td>
-              <td><button id=".$row['sno']." class='btn btn-sm btn-primary edit'>Edit</button> <button id=d".$row['sno']." class='btn btn-sm btn-primary delete'>Delete</button>
+              <th scope='row' class='bg-info-subtle'>". $sno ."</th>
+              <td class='bg-info-subtle'>". $row['title'] ."</td>
+              <td class='bg-info-subtle'>". $row['description'] ."</td>
+              <td class='bg-info-subtle'><button id=".$row['sno']." class='btn btn-sm btn-primary edit'>Edit</button> <button id=d".$row['sno']." class='btn btn-sm btn-primary delete'>Delete</button>
             </tr>";
             $sno = $sno +1;
           }          
